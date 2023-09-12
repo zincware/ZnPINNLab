@@ -7,6 +7,8 @@ _all_ = [
     "matplotlib",
     "seaborn",    
     "ipykernel",
+    "black",
+    "isort",
 ]
 
 # Create the list of packages to install for each platform individually
