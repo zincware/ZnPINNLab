@@ -65,7 +65,7 @@ class PhysicalSystem:
         """
         a = torch.zeros_like(y)
         v_abs = torch.norm(y[1])
-        a[1] = - self.coeff * v_abs * y[1] / self.mass - torch.tensor([0, self.g])
+        a[1] = -self.coeff * v_abs * y[1] / self.mass - torch.tensor([0, self.g])
         a[0] = y[1]
         return a
 
@@ -83,6 +83,10 @@ class ProjectileDataGenerator:
         ----------
         system : PhysicalSystem
             Physical system parameters.
+        step_size : float, optional
+            Step size for the integration.
+        stop_condition : bool
+            Condition to stop the integration.
         """
         self.system = system
         self.step_size = step_size
@@ -159,6 +163,18 @@ class ProjectileDataGenerator:
 
         The integration is performed using the Runge-Kutta 4th order method.
         With finishing the integration, the final data is generated.
+
+        Returns
+        -------
+        Update the final data attributes:
+        time : torch.tensor
+            Time.
+        position : torch.tensor
+            Position.
+        velocity : torch.tensor
+            Velocity.
+        acceleration : torch.tensor
+            Acceleration.
         """
 
         while self._update_break_condition(self._y) is False:
