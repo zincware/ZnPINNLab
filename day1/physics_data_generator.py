@@ -42,10 +42,23 @@ class PhysicalSystem:
     drag_coeff: float = 0.47  # Drag coefficient
     cross_area: float = 0.01  # Cross-sectional area [m^2]
     mass: float = 0.1  # Mass of the projectile [kg]
-    coeff: float = 0.5 * density * drag_coeff * cross_area
     # Initial Conditions
     r_0 = torch.tensor([0.0, 0.0])  # Initial position
     v_0 = torch.tensor([40.0, 60.0])  # Initial velocity
+
+    def __post_init__(self):
+        """
+        Post-initialization method.
+
+        The method is used to calculate the coefficient used in the calculation
+        of the acceleration.
+
+        Returns
+        -------
+        Updates the coefficient attribute.
+        self.coeff : float
+        """
+        self.coeff: float = 0.5 * self.density * self.drag_coeff * self.cross_area
 
     def calc_acceleration(self, t, y):
         """
