@@ -3,14 +3,12 @@ from matplotlib.animation import FuncAnimation
 import numpy as np
 
 class AnimationGenerator:
-    def __init__(self, num_epochs, train_loss_evolution, test_loss_evolution, predictions_list, train_ds, position):
+    def __init__(self, train_loss_evolution, test_loss_evolution, predictions_list, train_ds, position, test_ds):
         """
         Initializes an AnimationGenerator object.
 
         Parameters:
         -----------
-        num_epochs : int
-            The number of epochs in the training process.
         train_loss_evolution : list
             A list of floats representing the training loss at each epoch.
         test_loss_evolution : list
@@ -26,12 +24,12 @@ class AnimationGenerator:
         --------
         None
         """
-        self.num_epochs = num_epochs
         self.train_loss_evolution = train_loss_evolution
         self.test_loss_evolution = test_loss_evolution
         self.predictions_list = predictions_list
         self.train_ds = train_ds
         self.position = position
+        self.test_ds = test_ds
         
         self.fig, (self.ax1, self.ax2) = plt.subplots(1, 2, figsize=(16, 5))
         self.prediction_plot = None
@@ -64,7 +62,7 @@ class AnimationGenerator:
         self.epoch_text = self.ax1.text(0.05, 0.95, '', transform=self.ax1.transAxes, ha='left', fontsize=12)
 
         # Customize the second subplot (right)
-        self.ax2.set_xlim(0, self.num_epochs)
+        self.ax2.set_xlim(0, len(self.train_loss_evolution))
         self.ax2.set_ylim(
             min(min(self.train_loss_evolution), min(self.test_loss_evolution)),
             max(max(self.train_loss_evolution), max(self.test_loss_evolution))
