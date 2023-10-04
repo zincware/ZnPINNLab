@@ -43,8 +43,8 @@ class PhysicalSystem:
     cross_area: float = 0.01  # Cross-sectional area [m^2]
     mass: float = 0.1  # Mass of the projectile [kg]
     # Initial Conditions
-    r_0 = torch.tensor([0.0, 0.0])  # Initial position
-    v_0 = torch.tensor([40.0, 60.0])  # Initial velocity
+    r_0: torch.tensor = None  # Initial position
+    v_0: torch.tensor = None  # Initial velocity
 
     def __post_init__(self):
         """
@@ -58,7 +58,11 @@ class PhysicalSystem:
         Updates the coefficient attribute.
         self.coeff : float
         """
-        self.coeff: float = 0.5 * self.density * self.drag_coeff * self.cross_area
+        self.coeff = 0.5 * self.density * self.drag_coeff * self.cross_area
+        if self.r_0 is None:
+            self.r_0 = torch.tensor([0.0, 0.0])
+        if self.v_0 is None:
+            self.v_0 = torch.tensor([40.0, 60.0])
 
     def calc_acceleration(self, t, y):
         """
