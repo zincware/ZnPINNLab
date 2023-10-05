@@ -54,9 +54,9 @@ class AnimationGenerator:
         self.ax1.set_xlabel('x')
         self.ax1.set_ylabel('y')
         self.ax1.set_title("Model output during training")
-        self.prediction_plot = self.ax1.scatter([], [], marker='o', alpha=0.1, c='b', s=10, label='Predicted output')
-        self.ax1.plot(self.test_ds["targets_x"].squeeze(1), self.test_ds["targets_y"].squeeze(1), label='True solution')
-        self.ax1.plot(self.train_ds["targets_x"].detach().numpy(), self.train_ds["targets_y"].detach().numpy(), 'o', label='Training Points')
+        self.prediction_plot = self.ax1.scatter([], [], marker='o', alpha=0.1, c='tab:blue', s=10, label='Predicted output')
+        self.ax1.plot(self.test_ds["targets_x"].squeeze(1), self.test_ds["targets_y"].squeeze(1), c='tab:orange', label='True solution')
+        self.ax1.plot(self.train_ds["targets_x"].detach().numpy(), self.train_ds["targets_y"].detach().numpy(), 'o', c='g', label='Training Points')
         self.ax1.legend()
         self.epoch_text = self.ax1.text(0.05, 0.95, '', transform=self.ax1.transAxes, ha='left', fontsize=12)
 
