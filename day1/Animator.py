@@ -3,7 +3,7 @@ from matplotlib.animation import FuncAnimation
 import numpy as np
 
 class AnimationGenerator:
-    def __init__(self, train_loss_evolution, test_loss_evolution, predictions_list, train_ds, position, test_ds):
+    def __init__(self, train_loss_evolution, test_loss_evolution, predictions_list, train_ds, test_ds):
         """
         Initializes an AnimationGenerator object.
 
@@ -17,8 +17,8 @@ class AnimationGenerator:
             A list of tuples representing the predicted output at each epoch.
         train_ds : dict
             A dictionary containing the training dataset.
-        position : numpy.ndarray
-            A numpy array containing the true solution.
+        test_ds : dict
+            A dictionary containing the training dataset of the true solution.
 
         Returns:
         --------
@@ -28,7 +28,6 @@ class AnimationGenerator:
         self.test_loss_evolution = test_loss_evolution
         self.predictions_list = predictions_list
         self.train_ds = train_ds
-        self.position = position
         self.test_ds = test_ds
         
         self.fig, (self.ax1, self.ax2) = plt.subplots(1, 2, figsize=(16, 5))
@@ -56,7 +55,7 @@ class AnimationGenerator:
         self.ax1.set_ylabel('y')
         self.ax1.set_title("Model output during training")
         self.prediction_plot = self.ax1.scatter([], [], marker='o', alpha=0.1, c='b', s=10, label='Predicted output')
-        self.ax1.plot(self.position[:, 0], self.position[:, 1], label='True solution')
+        self.ax1.plot(self.test_ds["targets_x"].squeeze(1), self.test_ds["targets_y"].squeeze(1), label='True solution')
         self.ax1.plot(self.train_ds["targets_x"].detach().numpy(), self.train_ds["targets_y"].detach().numpy(), 'o', label='Training Points')
         self.ax1.legend()
         self.epoch_text = self.ax1.text(0.05, 0.95, '', transform=self.ax1.transAxes, ha='left', fontsize=12)
