@@ -9,6 +9,8 @@ _all_ = [
     "ipykernel",
     "black",
     "isort",
+    "ipywidgets",
+    "tqdm",    
 ]
 
 # Create the list of packages to install for each platform individually
