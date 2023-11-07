@@ -43,7 +43,7 @@ class Schrodinger_Initial(Dataset):
     def __len__(self):
         return len(self.x)
     def getall(self):
-        return self.x, self.t, self.h
+        return self.x, self.t, self.h, 
 
 class Schrodinger(Dataset):
     def __init__(self, num_col_schro = 20000): # returns x,t
