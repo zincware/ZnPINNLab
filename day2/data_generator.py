@@ -32,6 +32,7 @@ class Schrodinger_Initial(Dataset):
         h_func = lambda x : 2 * (1/torch.cosh(x))
         self.num_h_init = num_h_init
         self.x = torch.tensor((lhs(1,samples=num_h_init)*10 - 5)).float().to(device)
+        self.t = torch.zeros((num_h_init,1)).float().to(device)
         self.h = torch.squeeze(torch.stack((
             torch.tensor(h_func(self.x)).float().to(device),
             torch.zeros((len(self.x),1)).to(device)
@@ -42,7 +43,7 @@ class Schrodinger_Initial(Dataset):
     def __len__(self):
         return len(self.x)
     def getall(self):
-        return self.x,self.h
+        return self.x, self.t, self.h
 
 class Schrodinger(Dataset):
     def __init__(self, num_col_schro = 20000): # returns x,t
