@@ -39,18 +39,18 @@ class Schrodinger_Initial(Dataset):
         ),1))
         return
     def __getitem__(self,idx):
-        return self.x[idx], self.h[idx]
+        return self.x[idx], self.t[idx], self.h[idx]
     def __len__(self):
-        return len(self.x)
+        return len(self.x), len(self.t), len(self.h)
     def getall(self):
-        return self.x, self.t, self.h, 
+        return  self.x, self.t, self.h
 
 class Schrodinger(Dataset):
     def __init__(self, num_col_schro = 20000): # returns x,t
         self.num_col_schro = num_col_schro
         x = torch.tensor(lhs(1,samples=num_col_schro)*10 - 5).float().to(device)
         t = torch.tensor(lhs(1,samples=num_col_schro)*(math.pi/2)).float().to(device)
-        self.X = torch.squeeze(torch.dstack((x,t))).float()
+        self.X = torch.squeeze(torch.dstack((x, t))).float()
         return 
     def __getitem__(self,idx):
         return self.X[idx]
