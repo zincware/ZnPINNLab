@@ -19,7 +19,7 @@ class Schrodinger_Boundary(Dataset):
     def __init__(self, num_col_bound = 50):  
         self.num_col_bound = num_col_bound
         num_col_bound_half = math.floor(num_col_bound/2)
-        self.t = torch.unsqueeze(torch.tensor(np.squeeze(lhs(1,samples=num_col_bound_half)*math.pi/2)).float().to(device),1)
+        self.t = torch.unsqueeze(torch.tensor(np.squeeze(lhs(1,samples=num_col_bound_half)*math.pi/2)).float().to(device), 1)
         return
     def __getitem__(self,idx):
         return self.t[idx]
@@ -69,13 +69,13 @@ class Schrodinger_Initial_Oscillator(Dataset):
 class Schrodinger(Dataset):
     def __init__(self, num_col_schro = 20000): # returns x,t
         self.num_col_schro = num_col_schro
-        x = torch.tensor(lhs(1,samples=num_col_schro)*10 - 5).float().to(device)
-        t = torch.tensor(lhs(1,samples=num_col_schro)*(math.pi/2)).float().to(device)
-        self.X = torch.squeeze(torch.dstack((x, t))).float()
+        self.x = torch.tensor(lhs(1,samples=num_col_schro)*10 - 5).float().to(device)
+        self.t = torch.tensor(lhs(1,samples=num_col_schro)*(math.pi/2)).float().to(device)
+        #self.X = torch.squeeze(torch.dstack((x, t))).float()
         return 
     def __getitem__(self,idx):
-        return self.X[idx]
+        return self.x[idx], self.t[idx]
     def __len__(self):
-        return len(self.X)
+        return len(self.x), len(self.t)
     def getall(self):
-        return self.X
+        return self.x, self.t
