@@ -49,7 +49,9 @@ class Schrodinger_Initial(Dataset):
 class Schrodinger_Initial_Oscillator(Dataset):
     def __init__(self, num_h_init=50, n=1):
         self.num_samples = num_h_init
-        psi = lambda x: torch.exp(-x ** 2 / 2) * special.hermite(n, monic=True)(x)
+        factorial = lambda n: 1 if n == 0 else n * factorial(n - 1)
+        normfactor = lambda n: (1/torch.sqrt(torch.ones_like(self.x)*factorial(n)*2**n))*(1/torch.pi**(1/4))
+        psi = lambda x: normfactor(n)*torch.exp(-x ** 2 / 2) * special.hermite(n, monic=True)(x)
         self.x = torch.tensor((lhs(1,samples=num_h_init)*10 - 5)).float().to(device)
         self.t = torch.zeros((num_h_init, 1)).float().to(device)
         self.psi = torch.squeeze(torch.stack((
