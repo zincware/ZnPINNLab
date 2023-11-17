@@ -19,7 +19,7 @@ class Schrodinger_Boundary(Dataset):
     def __init__(self, num_col_bound = 50):  
         self.num_col_bound = num_col_bound
         num_col_bound_half = math.floor(num_col_bound/2)
-        self.t = torch.unsqueeze(torch.tensor(np.squeeze(lhs(1,samples=num_col_bound_half)*math.pi/2)).float().to(device), 1)
+        self.t = torch.unsqueeze(torch.tensor(np.squeeze(lhs(1,samples=num_col_bound_half)*math.pi*4/5)).float().to(device), 1)
         self.x = torch.ones_like(self.t).float().to(device)*5
         return
     def __getitem__(self,idx):
@@ -68,7 +68,7 @@ class Schrodinger_Initial_Oscillator_omega2(Dataset):
     def getall(self):
         return self.x, self.t, self.psi
 
-class Schrodinger_Initial_Oscillator_omega1(Dataset):
+class Schrodinger_Initial_Oscillator(Dataset):
     def __init__(self, num_h_init=50, n=0):
         self.num_samples = num_h_init
         factorial = lambda n: 1 if n == 0 else n * factorial(n - 1)
@@ -94,7 +94,7 @@ class Schrodinger(Dataset):
     def __init__(self, num_col_schro = 20000): # returns x,t
         self.num_col_schro = num_col_schro
         self.x = torch.tensor(lhs(1,samples=num_col_schro)*10 - 5).float().to(device)
-        self.t = torch.tensor(lhs(1,samples=num_col_schro)*(math.pi/2)).float().to(device)
+        self.t = torch.tensor(lhs(1,samples=num_col_schro)*(math.pi*4/5)).float().to(device)
         #self.X = torch.squeeze(torch.dstack((x, t))).float()
         return 
     def __getitem__(self,idx):
