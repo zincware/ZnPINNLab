@@ -9,17 +9,16 @@ class AnimationGenerator:
 
         Parameters:
         -----------
-        train_loss_evolution : list
-            A list of floats representing the training loss at each epoch.
-        test_loss_evolution : list
-            A list of floats representing the test loss at each epoch.
         predictions_list : list
-            A list of tuples representing the predicted output at each epoch.
-        train_ds : dict
-            A dictionary containing the training dataset.
-        test_ds : dict
-            A dictionary containing the training dataset of the true solution.
-
+            A list of tensors representing the euklidean norm of the predicted output at each time step.
+        predictions_list_r : list
+            A list of tensors representing the real part of the predicted output at each time step.
+        predictions_list_i : list
+            A list of tensors representing the imaginary part of the predicted output at each time step.
+        psi_min : float
+            The minimum value of the wavefunction.
+        psi_max : float
+            The maximum value of the wavefunction.
         Returns:
         --------
         None
@@ -30,7 +29,7 @@ class AnimationGenerator:
         self.predcitions_list = predcitions_list
         self.predictions_list_r = predictions_list_r
         self.predictions_list_i = predictions_list_i
-        self.X = torch.linspace(-5,5,100).reshape(-1,1)
+        self.X = torch.linspace(-5,5,100).reshape(-1,1) # for plotting
         
         self.fig, self.ax1 = plt.figure(), plt.axes()
         self.prediction_plot = None
@@ -77,8 +76,10 @@ class AnimationGenerator:
         tuple
             A tuple containing the updated scatter plot, epoch text, and loss lines.
         """
+        # Get the predictions for the current frame
         hf_r, hf_i, h = self.predictions_list_r[frame], self.predictions_list_i[frame], self.predcitions_list[frame]
-         # Update the line plot for the both parts
+
+        # Update the plots
         self.prediction_plot.set_data(self.X.detach().numpy(), h.detach().numpy())
         self.prediction_plot_r.set_data(self.X.detach().numpy(), hf_r.detach().numpy())
         self.prediction_plot_i.set_data(self.X.detach().numpy(), hf_i.detach().numpy())
@@ -102,7 +103,14 @@ class AnimationGenerator:
         --------
         None
         """
+        # Set the path to the ffmpeg executable
         plt.rcParams['animation.ffmpeg_path'] ='./bin/ffmpeg.exe'
+        
+        # Create the plot for the animation
         self._create_plot()
+        
+        # Create the animation using FuncAnimation
         ani = FuncAnimation(self.fig, self._update, frames=frames, blit=True)
+        
+        # Save the animation to a file using the specified filename, writer, and fps
         ani.save(filename, writer='ffmpeg', fps=fps)
