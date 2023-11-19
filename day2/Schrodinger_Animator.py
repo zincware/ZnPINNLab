@@ -55,7 +55,7 @@ class AnimationGenerator:
         self.ax1.set_xlabel('Position x')
         self.ax1.set_ylabel('Wavefunction(x)')
         self.ax1.set_title("Model output over time")
-        self.prediction_plot, = plt.plot([], [], alpha=1, c='black', label='|psi|^2')
+        self.prediction_plot, = plt.plot([], [], alpha=1, c='black', label='|psi|')
         self.prediction_plot_r, = plt.plot([], [], alpha=1, c='tab:blue', label='Real part')
         self.prediction_plot_i, = plt.plot([], [], alpha=1, c='tab:red', label='Imaginary part')
         self.ax1.legend(loc='upper right')
@@ -104,7 +104,7 @@ class AnimationGenerator:
         None
         """
         # Set the path to the ffmpeg executable
-        plt.rcParams['animation.ffmpeg_path'] ='./bin/ffmpeg.exe'
+        plt.rcParams['animation.ffmpeg_path'] ='../bin/ffmpeg.exe'
         
         # Create the plot for the animation
         self._create_plot()
