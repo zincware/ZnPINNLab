@@ -89,7 +89,7 @@ class AnimationGenerator:
             A tuple containing the updated scatter plot, epoch text, and loss lines.
         """
         x_pred, y_pred = self.predictions_list[frame]
-        self.prediction_plot.set_offsets(np.column_stack((x_pred, y_pred)))
+        self.prediction_plot.set_offsets(np.column_stack((x_pred.detach().numpy(), y_pred.detach().numpy())))
         epoch_number = (frame) + 1
         self.epoch_text.set_text(f'Epoch: {epoch_number}')
         self.train_loss_plot.set_data(range(frame + 1), self.train_loss_evolution[:frame + 1])
@@ -113,6 +113,8 @@ class AnimationGenerator:
         --------
         None
         """
+        # Set the path to the ffmpeg executable
+        plt.rcParams['animation.ffmpeg_path'] ='../bin/ffmpeg.exe'
         self._create_plot()
         ani = FuncAnimation(self.fig, self._update, frames=frames, blit=True)
         ani.save(filename, writer='ffmpeg', fps=fps)
