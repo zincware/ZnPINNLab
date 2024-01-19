@@ -49,8 +49,8 @@ class AnimationGenerator:
         None
         """
         # Customize the first subplot (left)
-        self.ax1.set_xlim(0, 60)
-        self.ax1.set_ylim(0, 60)
+        #self.ax1.set_xlim(0, 37)
+        #self.ax1.set_ylim(0, 22)
         self.ax1.set_xlabel('x')
         self.ax1.set_ylabel('y')
         self.ax1.set_title("Model output during training")
@@ -73,6 +73,8 @@ class AnimationGenerator:
         self.train_loss_plot, = self.ax2.plot([], [], label='Train Loss', lw=2, c='r')
         self.test_loss_plot, = self.ax2.plot([], [], label='Test Loss', lw=2, c='g')
         self.ax2.legend(loc='upper right')
+        # Adjust layout for subplots
+        plt.tight_layout()
     
     def _update(self, frame):
         """
