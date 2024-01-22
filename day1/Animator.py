@@ -49,8 +49,8 @@ class AnimationGenerator:
         None
         """
         # Customize the first subplot (left)
-        self.ax1.set_xlim(0, 60)
-        self.ax1.set_ylim(0, 60)
+        #self.ax1.set_xlim(0, 37)
+        #self.ax1.set_ylim(0, 22)
         self.ax1.set_xlabel('x')
         self.ax1.set_ylabel('y')
         self.ax1.set_title("Model output during training")
@@ -73,6 +73,8 @@ class AnimationGenerator:
         self.train_loss_plot, = self.ax2.plot([], [], label='Train Loss', lw=2, c='r')
         self.test_loss_plot, = self.ax2.plot([], [], label='Test Loss', lw=2, c='g')
         self.ax2.legend(loc='upper right')
+        # Adjust layout for subplots
+        plt.tight_layout()
     
     def _update(self, frame):
         """
@@ -89,7 +91,7 @@ class AnimationGenerator:
             A tuple containing the updated scatter plot, epoch text, and loss lines.
         """
         x_pred, y_pred = self.predictions_list[frame]
-        self.prediction_plot.set_offsets(np.column_stack((x_pred, y_pred)))
+        self.prediction_plot.set_offsets(np.column_stack((x_pred.detach().numpy(), y_pred.detach().numpy())))
         epoch_number = (frame) + 1
         self.epoch_text.set_text(f'Epoch: {epoch_number}')
         self.train_loss_plot.set_data(range(frame + 1), self.train_loss_evolution[:frame + 1])
@@ -113,6 +115,8 @@ class AnimationGenerator:
         --------
         None
         """
+        # Set the path to the ffmpeg executable
+        plt.rcParams['animation.ffmpeg_path'] ='../bin/ffmpeg.exe'
         self._create_plot()
         ani = FuncAnimation(self.fig, self._update, frames=frames, blit=True)
         ani.save(filename, writer='ffmpeg', fps=fps)
