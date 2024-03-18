@@ -39,7 +39,7 @@ class PhysicalSystem:
 
     g: float = 9.81  # Acceleration due to gravity [m/s^2]
     density: float = 1.225  # Air density [kg/m^3]
-    drag_coeff: float = 0.47  # Drag coefficient
+    drag_coeff: float = 0.47   # Drag coefficient
     cross_area: float = 0.01  # Cross-sectional area [m^2]
     mass: float = 0.1  # Mass of the projectile [kg]
     # Initial Conditions
@@ -62,7 +62,7 @@ class PhysicalSystem:
         if self.r_0 is None:
             self.r_0 = torch.tensor([0.0, 0.0])
         if self.v_0 is None:
-            self.v_0 = torch.tensor([40.0, 60.0])
+            self.v_0 = torch.tensor([20.0, 30.0])
 
     def calc_acceleration(self, t, y):
         """
@@ -92,7 +92,7 @@ class ProjectileDataGenerator:
     Class to generate data for projectile motion with air drag.
     """
 
-    def __init__(self, system: PhysicalSystem, step_size: float = 0.01):
+    def __init__(self, system: PhysicalSystem, step_size: float = 0.001):
         """
         Constructor of the class.
 
