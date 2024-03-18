@@ -126,3 +126,112 @@ class SolutionVisualizer:
         plt.xlabel(r"x$\left[\sqrt{\frac{\hbar}{m\omega}}\right]$")
         plt.ylabel(r"$|Ψ(x,t)|$")
         plt.show()
+
+def logarithmic_sampling(num_epochs):
+    """
+    This function performs logarithmic sampling of the number of epochs.
+    It is used to sample the number of epochs for the training procedure.
+    The logarithmic sampling is performed using the following steps:
+
+    Parameters
+    ----------
+    num_epochs : int
+        The number of epochs for training.
+    
+    Returns
+    -------
+    List[int]
+        A list containing the logarithmically sampled epochs.
+    """
+    min_val = 1.0
+    max_val = num_epochs
+    exponent = 6.0  # Sharpness
+    pred_epoch_list = []
+
+    for i in np.arange(0.0, 1+(1/543), 1/543):
+        result = int(pow(i, exponent) * (max_val - min_val) + min_val)
+        if result not in pred_epoch_list:
+            pred_epoch_list.append(result)
+
+    return pred_epoch_list
+
+def get_prediction(model, period, device):
+    """
+    Get the predicted solution of the Schrödinger equation.
+
+    This function computes the predicted solution of the Schrödinger equation
+    using the trained PINN model. The following steps are involved:
+
+    Step 1: Position and Time Array Creation
+        - Create position and time arrays using the 'torch.linspace' method.
+    
+    Step 2: Meshgrid Creation  
+        - Create a meshgrid using the 'torch.meshgrid' method.
+        - Concatenate the position and time arrays along the 2 axis.
+
+    Step 3: Model Prediction   
+        - Use the trained model to predict the real and imaginary parts of the solution.
+        - Compute the norm of the predicted solution.
+
+    Parameters  
+    ----------
+    model : torch.nn.Module
+        The trained physics-informed neural network model.
+    period : float
+        The period of the solution.
+    device : str
+        The device to run the model on.
+
+    Returns
+    -------
+    torch.Tensor
+        The predicted real and imaginary parts of the solution.
+    """
+    # Create position and time arrays
+    x = torch.linspace(-5,5,100)
+    t = torch.linspace(0,period,300)
+
+    # Create a meshgrid
+    X,T = torch.meshgrid(x,t)
+    _X = torch.tensor(torch.dstack((X,T))).float().to(device)
+
+    # Compute the predicted real and imaginary parts of the solution
+    h_r_hat, h_i_hat = model(_X)
+    h_hat = torch.cat((h_r_hat, h_i_hat),2)
+    h_norm = torch.sqrt((h_hat[:,:,0] ** 2) + (h_hat[:,:,1] ** 2)).unsqueeze(2)
+    h_hat = torch.cat((h_hat, h_norm), 2)
+    return h_hat
+
+def visualize_training(train_loss_evolution, test_loss_evolution):
+    """
+    Visualize the evolution of the loss during training.
+
+    This function plots the evolution of the loss during training.
+    The following steps are involved:
+
+
+    Parameters
+    ----------
+    train_loss_evolution : list
+        A list containing train loss values during training.
+    test_loss_evolution : list
+        A list containing test loss values during training.
+
+    Returns
+    -------
+    None
+    """
+    # Step 1: Create a figure and axis
+    fig, ax = plt.subplots()
+
+    # Add labels and a legend
+    ax.plot(np.linspace(0, len(train_loss_evolution), len(train_loss_evolution)), train_loss_evolution, c='r', label='Training loss')
+    ax.plot(np.linspace(0, len(test_loss_evolution), len(test_loss_evolution)), test_loss_evolution, c='g', label='Test loss')
+    ax.legend()
+    ax.set_title('Loss Evolution')
+    ax.set_xlabel('Epoch')
+    ax.set_ylabel('Loss')
+    ax.set_yscale('log')  # Set y-axis to logarithmic scale
+
+    # Show the plot
+    plt.show()
