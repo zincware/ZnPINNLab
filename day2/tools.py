@@ -2,6 +2,7 @@ import torch
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+import math
 
 class SolutionVisualizer:
     """
@@ -235,3 +236,97 @@ def visualize_training(train_loss_evolution, test_loss_evolution):
 
     # Show the plot
     plt.show()
+
+def visualize_imported_data(boundary_vals, initial_vals, schrodinger_vals, shared_data, save_svg=False):
+    """
+    This function visualizes the imported data from the data_generator.py file.
+    The imported data are the boundary, initial and schrodinger data.
+    It enables the user to save the figure as a svg file.
+    Therefore, set the save_svg parameter to True.
+
+    Parameters
+    ----------
+    boundary_vals : torch.tensor
+        boundary data
+    initial_vals : torch.tensor
+        initial data
+    schrodinger_vals : torch.tensor
+        schrodinger data
+    shared_data : SharedData
+        shared data
+    save_svg : bool, optional
+        save figure as svg file, by default False
+    
+    Returns
+    -------
+    None
+        None
+    """
+    n = shared_data.n
+    period = shared_data.period
+    schr = schrodinger_vals.getall()
+    init = initial_vals.getall()
+    bound = boundary_vals.getall()
+
+    schrodinger_x = schr[0].cpu()
+    schrodinger_t = schr[1].cpu()
+
+    boundary_x = bound[0].cpu()
+    boundary_t = bound[1].cpu()
+
+    init_x = init[0].cpu()
+    init_t = init[1].cpu()
+
+    x, t, psi = init
+
+    
+    #%matplotlib inline
+    # Create a 3D plot
+    fig = plt.figure(figsize=(10,10))
+    ax = plt.axes(projection= '3d')
+
+    # Plotting in 3D
+    ax.scatter(init_t, init_x, psi[:, 0].cpu(), marker='x', label='Initial data real part')
+    ax.scatter(init_t, init_x, psi[:, 1].cpu(), marker='x', c='r', label='Initial data imaginary part')
+    ax.scatter(boundary_t, boundary_x, zs=0, marker='x', c='g', label='Boundary data')
+    ax.scatter(boundary_t, -boundary_x, zs=0, marker='x', c='g')
+    schrodinger_plot = ax.scatter(schrodinger_t, schrodinger_x, zs=0, marker='x', alpha=1, label='Schrodinger data')
+    
+    # Set labels and title
+    ax.set_title(fr'Training data for quantum number $n$ = {n}', fontsize=16)
+    ax.set_ylabel(r"$x\,\left[\sqrt{\frac{\hbar}{m\omega}}\right]$",)# fontsize=16)
+    ax.set_xlabel(r"$t\,[\omega^{-1}]$",)# fontsize=16)
+    ax.tick_params(axis='both',)# labelsize=14)
+    ax.set_zlabel(rf"$Ψ_{n}(x,t)$",)# fontsize=16)
+    ax.set_zticks([ 0, 1])
+    ax.set_yticks([-5, 0, 5])
+    ax.set_xticks([0, period/2, period])
+    ax.set_xticklabels(['$0$', f'${period/(2*math.pi)}\pi$', f'${period/math.pi}\pi$'])
+
+    # Plotting Training Data
+    ax.set_xlabel(r"$t\,[\omega^{-1}]$", fontsize=16)
+    ax.tick_params(axis='both', labelsize=14)
+    ax.legend(loc='upper right', fontsize=16)
+    schrodinger_plot.set_alpha(0.1) # Set alpha to 0.1 for better visibility
+    plt.show()
+
+    # Saving SVG if required
+    if save_svg:
+        fig.savefig(f'Trainingdata_n={n}.svg', format='svg', bbox_inches='tight')
+
+    # Plotting Initial Condition
+    fig, ax = plt.subplots()
+    ax.plot(x.cpu(), psi[:, 0].cpu(), 'x', label='Real part')
+    ax.plot(x.cpu(), psi[:, 1].cpu(), 'x', c='r', label='Imaginary part')
+    ax.set_title("Initial condition", fontsize=20)
+    ax.set_xlabel(r"$x\,\left[\sqrt{\frac{\hbar}{m\omega}}\right]$", fontsize=16)
+    ax.set_ylabel(fr"$Ψ_{n}(x,t=0)$", fontsize=16)
+    ax.tick_params(axis='both', labelsize=14)
+    ax.legend(fontsize=14, loc='upper left')
+    plt.show()
+
+    # Saving SVG if required
+    if save_svg:
+        fig.savefig(f'Initial_Condition_n={n}.svg', format='svg', bbox_inches='tight')
+
+    pass
