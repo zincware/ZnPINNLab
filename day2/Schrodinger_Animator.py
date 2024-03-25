@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
+from mpl_toolkits.mplot3d import Axes3D
 import torch
+import numpy as np
 
 class AnimationCreator:
     """
@@ -250,8 +252,8 @@ class AnimationCreator:
         self.plot_3d_imag = self.ax.plot_wireframe(self.T_cut, self.X_cut, self.h_hat_cut[:,:,1].detach().numpy(), cmap='OrRd', edgecolor='red', rstride=5, cstride = 5, linewidth=0.2)
         
         # Plot the 2D cross-sections
-        self.plot_2d_real = self.ax.plot( self.T[:, frame], self.X[:,frame], self.h_hat[:,frame,0].detach().numpy(), zdir='z', color='blue', label=r"$Ψ_r(x,t)$")
-        self.plot_2d_imag = self.ax.plot( self.T[:, frame], self.X[:,frame], self.h_hat[:,frame,1].detach().numpy(), zdir='z', color='red', label=r"$Ψ_i(x,t)$")
+        self.plot_2d_real = self.ax.plot( self.T[:, frame].numpy(), self.X[:,frame].numpy(), self.h_hat[:,frame,0].detach().numpy(), zdir='z', color='blue', label=r"$Ψ_r(x,t)$")
+        self.plot_2d_imag = self.ax.plot( self.T[:, frame].numpy(), self.X[:,frame].numpy(), self.h_hat[:,frame,1].detach().numpy(), zdir='z', color='red', label=r"$Ψ_i(x,t)$")
 
         # Set the view angle
         self.ax.view_init(17, -19)
@@ -273,7 +275,7 @@ class AnimationCreator:
         if frame == len(self.t)-1:
             self.fig.savefig(f'Cross-section.svg', format='svg', bbox_inches='tight')
 
-        return self.plot_3d_real, self.plot_2d_real, self.plot_3d_imag, self.plot_2d_imag
+        return self.plot_3d_real, self.plot_2d_real, self.plot_3d_imag#, self.plot_2d_imag
 
     def _update_complex_plot(self, frame):
         """
@@ -304,17 +306,17 @@ class AnimationCreator:
         """
         self.ax.clear()
         
-        self.plot_wave = self.ax.plot(self.h_hat[:,frame,1].detach().numpy(), self.X[:,frame], self.h_hat[:,frame,0].detach().numpy(), color='black', label='|Ψ(x,t)|')
-        self.plot_2d_real = self.ax.plot( self.X[:,frame], self.h_hat[:,frame,0].detach().numpy(),zs=0, zdir='x', color='blue', label=r"$Ψ_r(x,t)$")
-        self.plot_2d_imag = self.ax.plot( self.h_hat[:,frame,1].detach().numpy(), self.X[:,frame], zs=0, zdir='z', color='red', label=r"$Ψ_i(x,t)$")
+        self.plot_wave = self.ax.plot(self.h_hat[:,frame,1].detach().numpy(), self.X[:,frame].numpy(), self.h_hat[:,frame,0].detach().numpy(), color='black', label='|Ψ(x,t)|')
+        self.plot_2d_real = self.ax.plot( self.X[:,frame].numpy(), self.h_hat[:,frame,0].detach().numpy(),zs=0, zdir='x', color='blue', label=r"$Ψ_r(x,t)$")
+        self.plot_2d_imag = self.ax.plot( self.h_hat[:,frame,1].detach().numpy(), self.X[:,frame].numpy(), zs=0, zdir='z', color='red', label=r"$Ψ_i(x,t)$")
         self.plot_line = self.ax.plot(self.h_hat[int(self.num_x/2),:frame+1,1].detach().numpy(), self.h_hat[int(self.num_x/2),:frame+1,0].detach().numpy(), 
                                       zs=0, zdir='y',linestyle='--', color='black')
 
-        line_y_real = torch.tensor([0, self.h_hat[int(self.num_x/2), frame, 1].detach().numpy()])
-        line_z_real = torch.tensor([self.h_hat[int(self.num_x/2), frame, 0].detach(), self.h_hat[int(self.num_x/2), frame, 0].detach()])
+        line_y_real = np.array([0, self.h_hat[int(self.num_x/2), frame, 1].detach().numpy()])
+        line_z_real = np.array([self.h_hat[int(self.num_x/2), frame, 0].detach(), self.h_hat[int(self.num_x/2), frame, 0].detach()])
         
-        line_y_imag = torch.tensor([0, self.h_hat[int(self.num_x/2), frame, 0].detach().numpy()])
-        line_z_imag = torch.tensor([self.h_hat[int(self.num_x/2), frame, 1].detach(), self.h_hat[int(self.num_x/2), frame, 1].detach()])
+        line_y_imag = np.array([0, self.h_hat[int(self.num_x/2), frame, 0].detach().numpy()])
+        line_z_imag = np.array([self.h_hat[int(self.num_x/2), frame, 1].detach(), self.h_hat[int(self.num_x/2), frame, 1].detach()])
 
         self.plot_line_real = self.ax.plot(line_y_real, line_z_real, zs=0, zdir='y', linestyle='-.', color='blue')
         self.plot_line_imag = self.ax.plot( line_z_imag, line_y_imag, zs=0, zdir='y', linestyle='-.', color='red')
@@ -365,7 +367,7 @@ class AnimationCreator:
         None
         """
         # Set the path to the ffmpeg executable
-        plt.rcParams['animation.ffmpeg_path'] ='../bin/ffmpeg.exe'
+        plt.rcParams['animation.ffmpeg_path'] ='/usr/bin/ffmpeg'
         
         # Create the plot for the animation
         self.create_plot()
@@ -395,7 +397,7 @@ class AnimationCreator:
         None
         """ 
         # Set the path to the ffmpeg executable
-        plt.rcParams['animation.ffmpeg_path'] ='../bin/ffmpeg.exe'
+        plt.rcParams['animation.ffmpeg_path'] ='/usr/bin/ffmpeg'
         
         # Create the plot for the animation
         self.create_plot()
@@ -424,7 +426,7 @@ class AnimationCreator:
         None
         """
         # Set the path to the ffmpeg executable
-        plt.rcParams['animation.ffmpeg_path'] ='../bin/ffmpeg.exe'
+        plt.rcParams['animation.ffmpeg_path'] ='/usr/bin/ffmpeg'
         
         # Create the plot for the animation
         self.create_plot()
@@ -454,7 +456,7 @@ class AnimationCreator:
         None
         """
         # Set the path to the ffmpeg executable
-        plt.rcParams['animation.ffmpeg_path'] ='../bin/ffmpeg.exe'
+        plt.rcParams['animation.ffmpeg_path'] ='/usr/bin/ffmpeg'
         
         # Create the plot for the animation
         self.create_plot()
