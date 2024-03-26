@@ -25,6 +25,10 @@ class SharedData:
         Quantum number.
     """
     def __init__(self, num_col_bound=50, num_h_init=50, num_col_schro=20000, n=0):
+        
+        # Set seed for reproducibility
+        np.random.seed(42)
+        
         # Generate common values
         self.num_col_bound = num_col_bound
         self.num_h_init = num_h_init

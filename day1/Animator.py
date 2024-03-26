@@ -116,7 +116,7 @@ class AnimationGenerator:
         None
         """
         # Set the path to the ffmpeg executable
-        plt.rcParams['animation.ffmpeg_path'] ='../bin/ffmpeg.exe'
+        plt.rcParams['animation.ffmpeg_path'] ='/usr/bin/ffmpeg'
         self._create_plot()
         ani = FuncAnimation(self.fig, self._update, frames=frames, blit=True)
         ani.save(filename, writer='ffmpeg', fps=fps)
