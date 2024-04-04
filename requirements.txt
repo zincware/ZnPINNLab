@@ -1,0 +1,13 @@
+torch
+torchvision
+torchaudio
+torchopt
+numpy
+matplotlib
+seaborn
+ipykernel
+black
+isort
+ipywidgets
+tqdm
+pydoe
