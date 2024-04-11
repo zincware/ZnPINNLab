@@ -17,3 +17,8 @@ To activate the virtual environment, run the following command in the terminal:
 ```bash
 source venv/bin/activate
 ```
+To deactivate the virtual environment, run the following command in the terminal:
+```bash
+deactivate
+```
+
