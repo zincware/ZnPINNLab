@@ -288,8 +288,8 @@ def visualize_imported_data(boundary_vals, initial_vals, schrodinger_vals, share
     ax = plt.axes(projection= '3d')
 
     # Plotting in 3D
-    ax.scatter(init_t, init_x, psi[:, 0].cpu(), marker='x', label='Initial data real part')
-    ax.scatter(init_t, init_x, psi[:, 1].cpu(), marker='x', c='r', label='Initial data imaginary part')
+    ax.scatter(init_t, init_x, psi[:, 0].cpu()[:, None], marker='x', label='Initial data real part')
+    ax.scatter(init_t, init_x, psi[:, 1].cpu()[:, None], marker='x', c='r', label='Initial data imaginary part')
     ax.scatter(boundary_t, boundary_x, zs=0, marker='x', c='g', label='Boundary data')
     ax.scatter(boundary_t, -boundary_x, zs=0, marker='x', c='g')
     schrodinger_plot = ax.scatter(schrodinger_t, schrodinger_x, zs=0, marker='x', alpha=1, label='Schrodinger data')
