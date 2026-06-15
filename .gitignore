@@ -134,3 +134,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Claude Code / superpowers (do not commit)
+.claude/
+CLAUDE.md
+docs/superpowers/
+.solutions_scratch/
+*.solved.ipynb
