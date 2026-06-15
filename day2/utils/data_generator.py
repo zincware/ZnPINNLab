@@ -1,9 +1,18 @@
-from pyDOE import *
+from pyDOE3 import *
 import torch
 from torch.utils.data import Dataset
 import numpy as np
 import math
+import warnings
 from scipy import special
+
+# pyDOE3's lhs() ignores the global np.random state (it builds a fresh, unseeded
+# Generator when called without a seed), which would make the sampling below
+# non-deterministic. Passing a shared legacy RandomState reproduces the original
+# seed-42 sampling stream bit-for-bit; silence the (pinned-version) deprecation note.
+warnings.filterwarnings(
+    "ignore", message="Using random_state is deprecated", category=DeprecationWarning
+)
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -26,9 +35,10 @@ class SharedData:
     """
     def __init__(self, num_col_bound=50, num_h_init=50, num_col_schro=20000, n=0):
         
-        # Set seed for reproducibility
-        np.random.seed(42)
-        
+        # Set seed for reproducibility (shared RandomState consumed sequentially
+        # by the lhs calls below, matching the original global-stream behaviour).
+        rng = np.random.RandomState(42)
+
         # Generate common values
         self.num_col_bound = num_col_bound
         self.num_h_init = num_h_init
@@ -37,13 +47,13 @@ class SharedData:
         self.period = 4*math.pi/(1+2*self.n)
 
         num_col_bound_half = math.floor(num_col_bound/2)
-        self.t_bound = torch.unsqueeze(torch.tensor(np.squeeze(lhs(1, samples=num_col_bound_half)*4*math.pi/(1+2*self.n))).float().to(device), 1)
+        self.t_bound = torch.unsqueeze(torch.tensor(np.squeeze(lhs(1, samples=num_col_bound_half, random_state=rng)*4*math.pi/(1+2*self.n))).float().to(device), 1)
 
-        self.x_init = torch.tensor((lhs(1, samples=num_h_init)*10 - 5)).float().to(device)
+        self.x_init = torch.tensor((lhs(1, samples=num_h_init, random_state=rng)*10 - 5)).float().to(device)
         self.t_init = torch.zeros((num_h_init, 1)).float().to(device)
 
-        self.x_schro = torch.tensor(lhs(1, samples=num_col_schro)*10 - 5).float().to(device)
-        self.t_schro = torch.tensor(lhs(1, samples=num_col_schro)*(4*math.pi/(1+2*self.n))).float().to(device)
+        self.x_schro = torch.tensor(lhs(1, samples=num_col_schro, random_state=rng)*10 - 5).float().to(device)
+        self.t_schro = torch.tensor(lhs(1, samples=num_col_schro, random_state=rng)*(4*math.pi/(1+2*self.n))).float().to(device)
 
 
 
